@@ -1,0 +1,161 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{float}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\usepackage[english]{babel}
+\usepackage{amsthm}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usetikzlibrary {matrix}
+\usepackage{enumitem}% http://ctan.org/pkg/enumitem
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multicol}
+\usepackage{multirow}
+\usetikzlibrary{arrows}
+\usetikzlibrary {arrows.meta}
+\usetikzlibrary {calc}
+\usepackage{natbib}
+
+
+\title{Goldilock's Experiment Design}
+\author{Innocent Ndubuisi-Obi Jr }
+\date{August 2024}
+
+\begin{document}
+
+\maketitle
+
+\begin{quote}
+\textit{\quad All industrial experiments are split-plot experiments.} - Cuthbert Daniel
+\end{quote}
+
+\section{Design Overview}
+We design a \textit{Replicated Randomized Block Split-Plot Factorial Experiment with Covariate Adjustment} \cite{Montgomery2020-qa}. 
+
+
+
+\subsection{Effects Model}
+\begin{equation} \label{eq1}
+\begin{split}
+    y_{hijkl} & =  \mu + \tau_i + \delta_{l} + \beta_{j} + \gamma_{k} + (\beta\gamma)_{jk} + \theta_{ijk}  \\
+    &  + (\beta\delta)_{jl} + (\gamma\delta)_{kl} + (\beta\gamma\delta)_{jkl} + \phi_h 
+ + \epsilon_{ijklh}
+    \begin{cases}
+        i = 1, 2, \cdots n \\
+        j = 1, 2, 3 \\
+        k = 1, 2, 3 \\
+        l = 1, 2, 3 \\
+        h = 1, 2, 3\\
+    \end{cases}
+\end{split}
+\end{equation}
+
+The observations in our factorial experiment can be describe in the \textbf{effects model} in Equation \ref{eq1}. $\tau_i$ represents the replication effect (or the number of runs), $\phi_h$ represent the blocking factor effect for TCP slow start, $\beta_{j}$ and $\gamma_k$ represent the whole-plot main effects (Traffic Manager request and routing actions), $\theta_{ijk}$ is the whole-plot error, $\delta_{l}$ represent the subplot main effects (Zone type), and $\epsilon_{ijkl}$ represents the subplot error. The model represents the (main and interaction) effects of five factors: replication (\# of observations), blocks (noise factor controlling for TCP Slow Start), Zone types (with 3 levels), traffic manager request actions, and traffic manager route actions. Right now it assumes the interaction of blocking and treatment is negligible. Our research questions are:
+\begin{enumerate}
+    \item What effect does zone type and our traffic load balancing decisions have on the client-perceived request latencies?
+    \item Are their zones where request latencies perform poorly regardless of our load balancing decisions?
+\end{enumerate}
+
+To understand the model in Equation \ref{eq1}, it is important to understand the three randomization protocols. 
+\begin{itemize}
+    \item load balancing strategies are randomized and applied to plots, i.e \textbf{colos}.
+     \item requests are randomized in blocks representing the stage in a connection at which it was initiated in a subplot; i.e \textbf{clients},
+    \item requests to zone types were randomized and applied within blocks in subplots, \textbf{clients}.  
+\end{itemize}
+
+The experimental unit for load balancing decisions is a \textit{colo} and the experimental unit for the HTTP requests is the \textit{zone}. This is a split-plot design where the load balancing decision is the \textbf{whole-plot factor} and the zone type of the HTTP GET request is the \textbf{split-plot factor}. Additionally, the factor representing the noise associated to TCP Slow Start is also at the level of the subplot (client). This means that there are two sources of experimental errors. The first action on the \textit{colo} level and the the second acting on the \textit{client} level. 
+It is important to note here that blocking is a powerful tool especially when we care about controlling noise of factors that we are not directly interested in. This opens up the possible of blocking on a number of factors (colo size, region, customer size, etc). Some discretization of these factors in necessary is using full factorial designs and their are benefits to discretization that act as qualitative measures. When we choose to block we are considering a \textit{nuisance variability} as a \textit{restriction on randomization}.
+
+If we only consider the whole-plot factor then this would be a completely randomized design with the colos as the experimental units. If we only consider zone type, we could treat the colos as blocks and result in the randomized block design
+
+
+In this proof-of-concept factorial design, we are interested in testing the following basic hypotheses about (1) the equality of sub-plot effects (zone type), 
+\begin{equation} \label{eq2}
+\begin{split}
+    H_0 & : \delta_1 = \delta_2 \cdots \delta_l = 0 \\
+    H_1 & : \text{at least one } \delta_i \neq 0
+\end{split}
+\end{equation}
+, (2) the equality of whole-plot (TCP slow start run and traffic manager actions)
+\begin{equation} \label{eq3}
+\begin{split}
+    H_2 & : \beta_1 = \beta_2 \cdots \beta_b = 0 \\
+    H_3 & : \text{at least one } \beta_j \neq 0
+\end{split}
+\end{equation}
+\begin{equation} \label{eq4}
+\begin{split}
+    H_4 & : \gamma_1 = \gamma_2 \cdots \gamma_k = 0 \\
+    H_5 & : \text{at least one } \gamma_i \neq 0
+\end{split}
+\end{equation}
+\begin{equation} \label{eq5}
+\begin{split}
+    H_6 & : \phi_1 = \phi_2 \cdots \phi_h = 0 \\
+    H_7 & : \text{at least one } \phi_i \neq 0
+\end{split}
+\end{equation}
+, and (3) the interaction between subplot and whole plot effects (following only demonstrates a single interaction), 
+\begin{equation} \label{eq6}
+\begin{split}
+    H_8 & : (\delta\beta)_{ij} = 0 \ \ \text{for all } i, j \\
+    H_9 & : \text{ at least one } (\delta\beta)_{ij} \neq 0
+\end{split}
+\end{equation}
+
+%\begin{equation} \label{eq2}
+%\begin{split}
+%    H_0 & : \tau_1 = \tau_2 \cdots \tau_a = 0 \\
+%    H_1 & : \text{at least one } \tau_i \neq 0
+%\end{split}
+%\end{equation}
+\subsection{ANOVA Design}
+If this assumption is untrue, then we will want to add interaction effects. In Table \ref{tab:anova}, we present the ANOVA components for this design. This design assumes that teh replication factor (randomized block) is random, and the other four factors are fixed effects. In the table we use, $\sigma_{\theta}^{2}$ and $\sigma_{\epsilon}^{2}$ represent the variances of the whole-plot and subplit error, respectively. $\sigma_{\tau}^{2}$ is the variance of the block effects. Capital latin letter represent fixed effects. The whole-plot main effects and interaction are tested against the subplot error. If some of the design factors are random then either the test statistic changes or we use Satterthwaite's procedure where this is no exact $F$ test.\\ 
+\\
+\subsection{Linear Contrasts or Multiple Comparison Procedures} The main idea here is similar to that of multiple comparisons in basic ANOVA design: first do an F-test and if we can reject the null, then do ordinary t-tests between all pairs of means. In the case of split plot experiments, we do similarly except in this case separately for our whole plot, split-plot and the interaction contrasts. 
+\begin{description}
+    \item[Whole Plot Contrasts]
+    \item[Split Plot Contrasts]
+    \item[Interaction Contrasts]
+\end{description}
+
+\subsubsection{Multiple Comparisons} If the 
+
+
+\begin{table}[h!]
+    \def\arraystretch{1.5}
+    \centering
+    \begin{tabular}{c c c c}
+\hline
+\textbf{Source of Variation} & S\textbf{um of Squares} & \textbf{Degrees of Freedom} & \textbf{Expected Mean Square} \\
+\hline
+    Replicates ($\tau_i$) & & & \\
+     $\mathtt{TM_{CPU}}(\beta_j)$& & &\\
+      $\mathtt{TM_{NET}}(\gamma_k)$& & & \\
+      $\mathtt{TM_{CPU}TM_{NET}}$& & & \\
+      Whole-plot error ($\theta_{ijk}$) & & & \\
+      $\mathtt{ZONE(\delta_l)}$& & &\\
+      $\mathtt{TM_{CPU}ZONE}$& & & \\
+      $\mathtt{TM_{NET}ZONE}$& & & \\
+      $\mathtt{TM_{CPU}TM_{NET}ZONE}$& & & \\
+       Subplot error ($\epsilon_{ijkl}$) & & & \\
+       \hline
+       Total & $SS_{T}$& & \\
+       \hline
+      
+\end{tabular}
+      \caption{ANOVA for Split-Plot Deign with Factors in Whole-plot and Factor $\mathtt{ZONE}$ in Subplot}
+      \label{tab:anova}
+\end{table}
+
+\bibliographystyle{acm}
+\begin{small}
+\bibliography{ref}
+\end{small}
+\end{document}
