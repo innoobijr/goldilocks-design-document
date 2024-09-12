@@ -1,0 +1,29 @@
+\begin{table}[h!]
+    \def\arraystretch{1.5}
+    \centering
+    \begin{tabular}{>{\raggedleft}p{3cm} >{\raggedright}p{2cm} P{2cm} c c }
+\specialrule{.3em}{.2em}{.2em}
+\textbf{Source of Variation} & \textbf{Sum of Squares} & \textbf{Degrees of Freedom} & \textbf{Expected Mean Square} & 
+\textbf{F}\\
+\specialrule{.1em}{.05em}{.05em} 
+    Replicates & $SS_{\text{Replicates}}$ & 
+    $(n - 1)$ & $\sigma^{2}_{\epsilon} + 12pn\sum^{2}_{\tau}$ &  \\
+     $\mathtt{TM_{CPU}}$ & $SS_{\mathtt{TM_{CPU}}}$ & 1 & $\sigma^{2}_{\epsilon} + 3p\sigma^{2}_{\theta} + 6pn\Sigma_{j=1}^{a}\beta_{j}^{2}$ &\\
+      $\mathtt{TM_{NET}}$ & $SS_{\mathtt{TM_{NET}}}$ & 1 & $\sigma^{2}_{\epsilon} + 3p\sigma^{2}_{\theta} + 6pn\Sigma_{k=1}^{b}\gamma_{k}^{2}$ &\\
+      $\mathtt{TM_{CPU}TM_{NET}}$ & $SS_{\mathtt{TM_{CPU}TM_{NET}}}$ & 1 & $\sigma^{2}_{\epsilon} + 6p\sigma^{2}_{\theta} + 3pn\sum_{j=1}^{2}\sum_{k=1}^{2}(\beta\gamma)_{jk}^{2}$ & \\
+      Whole-plot error & $SS_{\theta}$ & $3(n - 1)$ & $\sigma^{2}_{\epsilon} + 6p\sigma^{2}_{\theta}$ & h \\
+      Blocks & $SS_{Blocks}$ & $(p - 1)$ & $\sigma^{2}_{\epsilon} + 12n\sigma^{2}_{\phi}$\\
+      $\mathtt{ZONE}$ & $SS_{\mathtt{ZONE}}$ & 2 & $\sigma^{2}_{\epsilon} + 2np\sum_{l=1}^{3}\delta_{l}^{2}$&\\
+      $\mathtt{TM_{CPU}ZONE}$ &  $SS_{\mathtt{TM_{CPU}ZONE}}$ & 2 & $\sigma^{2}_{\epsilon} + pn\sum_{j=1}^{2}\sum_{l=1}^{3}(\beta\delta)^{2}_{jl}$&\\
+      $\mathtt{TM_{NET}ZONE}$ & $SS_{\mathtt{TM_{NET}ZONE}}$ & 2 & $\sigma^{2}_{\epsilon} + pn\sum_{k=1}^{2}\sum_{l=1}^{3}(\gamma\delta)^{2}_{kl}$&\\
+      $\mathtt{TM_{CPU}TM_{NET}ZONE}$ & $SS_{\mathtt{TM_{CPU}TM_{NET}ZONE}}$ & 2 & $\sigma^{2}_{\epsilon} + \frac{np}{2}\sum_{j=1}^{2}\sum_{k=1}^{2}\sum_{l=1}^{3}(\beta\gamma\delta)_{jkl}^{2}$&\\
+       Subplot error & $SS_{SP}$ & 
+       & & \\
+       \hline
+       Total & $SS_{T}$ & $(12pn - 1)$ & &\\
+    \specialrule{.3em}{.2em}{.2em}
+    % $\text{SS}_T - \text{SS}_{Blocks} -\text{SS}_{\mathtt{WP}} - \text{SS}_{\mathtt{ZONE}} - \text{SS}_{\mathtt{TM_{CPU}}\mathtt{ZONE}} - \text{SS}_{\mathtt{TM_{NET}}\mathtt{ZONE}} -\text{SS}_{\mathtt{TM_{NET}}\mathtt{TM_{CPU}}\mathtt{ZONE}}$
+\end{tabular}
+      \caption{ANOVA for Split-Plot Deign with Blocking, and, Factors in Whole-plot and Factor $\mathtt{ZONE}$ in Subplot}
+      \label{tab:anova}
+\end{table}

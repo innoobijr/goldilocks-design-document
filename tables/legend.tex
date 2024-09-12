@@ -1,0 +1,33 @@
+\begin{table}[t!]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \textbf{Plot Type} & \textbf{Symbol} & \textbf{Factor} & \textbf{Description}  \\
+        \hline
+        \multirow{ 5}{*}{Whole Plot} & $\tau_i$ & Replicates &  \\
+        \cline{2-4}
+        & $\beta_j$ & $\mathtt{TM_{CPU}}$ & \\
+        \cline{2-4}
+         &$\gamma_k$ & $\mathtt{TM_{NET}}$ & \\
+        \cline{2-4}
+        & $\beta_j\gamma_k$ & $\mathtt{TM_{CPU}TM_{NET}}$ & \\
+        \cline{2-4}
+      & $\theta_{ijk}$ & Whole-plot error & \\
+      \hline
+      \multirow{ 6}{*}{Split Plot} & $\phi_m$ & Blocks &  \\
+        \cline{2-4}
+      & $\delta_l$ & $\mathtt{ZONE}$ &\\
+      \cline{2-4}
+    & $\beta_j\delta_l$ & $\mathtt{TM_{CPU}ZONE}$&  \\
+        \cline{2-4}
+    & $\gamma_k\delta_l$ & $\mathtt{TM_{NET}ZONE}$ &  \\
+      \cline{2-4}
+      & $\beta_j\gamma_k\delta_l$ & $\mathtt{TM_{CPU}TM_{NET}ZONE}$ & \\
+      \cline{2-4}
+      & $\epsilon_{ijklm}$ & Subplot error & \\
+      \hline
+       \hline
+    \end{tabular}
+    \caption{Caption}
+    \label{tab:my_label}
+\end{table}
